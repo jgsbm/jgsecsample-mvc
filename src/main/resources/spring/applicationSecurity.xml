@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- Spring Security関連の設定 -->
+
+    <!--
+      sec:httpやsec:intercept-urlの設定はSpringSecurityによってXML定義順に評価され、最初にマッチした設定が適用される。
+      そのため、設定は適用範囲が狭い順に定義すること。
+      また、設定内容を変更しなくとも、定義順を変更するだけで振る舞いが変わる可能性が高いため、編集の際は注意すること。
+    -->
+    <sec:http pattern="/webjars/**" security="none" />
+    <sec:http pattern="/css/**" security="none" />
+    <sec:http pattern="/js/**" security="none" />
+    <sec:http pattern="/images/**" security="none" />
+    <sec:http auto-config="true" access-denied-page="/index?error" use-expressions="true">
+        <sec:intercept-url pattern="/index" access="permitAll" />
+        <sec:intercept-url pattern="/userRegister" access="permitAll" />
+        <sec:intercept-url pattern="/userConfirm" access="permitAll" />
+        <sec:intercept-url pattern="/**" access="isAuthenticated()" />
+
+        <!-- Loginの設定 -->
+        <sec:form-login login-page="/index" login-processing-url="/login"
+                        authentication-failure-url="/index?error"
+                        default-target-url="/menu"
+                        always-use-default-target="true"
+                        username-parameter="email"
+                        password-parameter="password" />
+
+        <!-- Logoutの設定 -->
+        <sec:logout logout-url="/logout" logout-success-url="/index" />
+    </sec:http>
+
+    <!-- ユーザ認証サービスの指定 -->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+    <sec:authentication-manager>
+        <sec:authentication-provider user-service-ref="loginUserDetailService">
+            <sec:password-encoder ref="passwordEncoder" />
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+    <!-- 暗号化機能に関する設定 -->
+    <bean class="jgs.bluemix.sample.crypto.HexEncodingTextEncryptor">
+        <constructor-arg ref="lesserAesBytesEncryptor" />
+    </bean>
+
+    <bean id="lesserAesBytesEncryptor" class="jgs.bluemix.sample.crypto.LesserAesBytesEncryptor">
+        <!-- TODO 設定情報を外部ファイル化し、property-placeholderで取り込む -->
+        <constructor-arg name="password" value="BXwN51y9fKBBziY0dHXz" />
+        <constructor-arg name="salt" value="153ab3c90ad82fb278fa" />
+    </bean>
+</beans>

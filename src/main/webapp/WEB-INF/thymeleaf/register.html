@@ -46,12 +46,13 @@
 							</tbody>
 						</table>
 						<br />
-						<div class="strong">発送先</div>
+						<div class="strong">注文／発送先情報</div>
 						<br />
-						<div class="form-group">
-							<div class="radio">
-								<label><input type="radio" name="address" />登録済みの住所に発送する。</label>
-							</div>
+						<div class="col-xs-12 well">
+							<div class="col-xs-2 text-right">お名前：</div><div class="col-xs-10 text-left" th:text="${customerView.name}">山田太郎</div>
+							<div class="col-xs-2 text-right">発送先住所：</div><div class="col-xs-10 text-left" th:text="${customerView.address}">東京都千代田区X-X-X</div>
+							<div class="col-xs-2 text-right">電話番号：</div><div class="col-xs-10 text-left" th:text="${customerView.tel}">商品詳細</div>
+							<div class="col-xs-2 text-right">ご利用カード番号：</div><div class="col-xs-10 text-left" th:text="${customerView.maskedCreditno}">0</div>
 						</div>
 						<br />
 						<div class="row text-center">

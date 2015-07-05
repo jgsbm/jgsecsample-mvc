@@ -12,10 +12,21 @@ public interface CustomerMapper {
 
     /**
      * 引数に指定されたメールアドレスを保持するユーザを検索します.
+     * 当メソッドはCustomersテーブルのみを検索対象とし、クレジットカード情報の検索は行いません.
+     * クレジットカード情報が必要となる場合は{@link #findCustomerWithCreditByMail(String)}メソッドを利用してください.
      * @param email 検索条件とするメールアドレス
-     * @return 検索結果
+     * @return クレジットカード情報を含まないCustomerエンティティ
      */
     Customer findCustomerByMail(String email);
+
+    /**
+     * 引数に指定されたメールアドレスを保持するユーザとクレジットカード情報を検索します.
+     * 当メソッドの呼び出し結果の{@link Customer}には当該ユーザの{@link CreditCard}エンティティが設定された状態で返却されます.
+     * クレジットカード情報が不要である場合{@link #findCustomerByMail(String)}メソッドを利用してください.
+     * @param email
+     * @return クレジットカード情報を含むCustomerエンティティ
+     */
+    Customer findCustomerWithCreditByMail(String email);
 
     /**
      * 引数に指定されたユーザを追加します.

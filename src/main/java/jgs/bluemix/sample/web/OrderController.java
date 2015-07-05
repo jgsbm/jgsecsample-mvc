@@ -1,12 +1,19 @@
 package jgs.bluemix.sample.web;
 
+import jgs.bluemix.sample.crypto.HexEncodingTextEncryptor;
+import jgs.bluemix.sample.crypto.LesserAesBytesEncryptor;
+import jgs.bluemix.sample.entity.Customer;
+import jgs.bluemix.sample.entity.LoginUser;
 import jgs.bluemix.sample.entity.Product;
 import jgs.bluemix.sample.exception.OutOfStockException;
 import jgs.bluemix.sample.message.BusinessMessageCodeEnum;
+import jgs.bluemix.sample.service.CustomerService;
 import jgs.bluemix.sample.service.OrderService;
 import jgs.bluemix.sample.service.ProductService;
+import jgs.bluemix.sample.util.CreditUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -31,10 +38,16 @@ public class OrderController {
     ProductService productService;
 
     @Autowired
+    CustomerService customerService;
+
+    @Autowired
     OrderService orderService;
 
     @Autowired
     MessageSource messageSource;
+
+    @Autowired
+    HexEncodingTextEncryptor hexEncodingTextEncryptor;
 
     @ModelAttribute
     OrderForm initForm() {
@@ -51,10 +64,14 @@ public class OrderController {
     }
 
     @RequestMapping("/register")
-    public String register(@RequestParam(value = "productCode") String productCode, Model model) {
+    public String register(@RequestParam(value = "productCode") String productCode,
+                           @AuthenticationPrincipal LoginUser user, Model model) {
         // Modelの情報を再取得してレジ画面を表示する
         Product product = productService.findStockProductByProductCode(productCode);
+        Customer customer = customerService.findCustomerWithCreditByMail(user.getUsername());
+        CashRegisterCustomerView customerView = createCustomerView(customer);
         model.addAttribute("product", product);
+        model.addAttribute("customerView", customerView);
         return "register";
     }
 
@@ -73,9 +90,20 @@ public class OrderController {
         ModelAndView mav = new ModelAndView("/detail");
         mav.addObject("hasErrorMessage", Boolean.TRUE);
         mav.addObject("errorMessage", messageSource.getMessage(exception.getMessageCode().getCode(),
-                new String[] {outOfStockProduct.getProductName()}, locale));
+                new String[]{outOfStockProduct.getProductName()}, locale));
         mav.addObject(outOfStockProduct);
         return mav;
+    }
+
+    private CashRegisterCustomerView createCustomerView(Customer customer) {
+        CashRegisterCustomerView result = new CashRegisterCustomerView();
+        result.setName(customer.getCustomerName());
+        result.setAddress(customer.getAddress());
+        result.setTel(customer.getTel());
+        String creditNo = hexEncodingTextEncryptor.decrypt(customer.getCreditCard().getEncryptedCreditno());
+        result.setMaskedCreditno(CreditUtils.separateAndMask(creditNo));
+
+        return result;
     }
 }
 

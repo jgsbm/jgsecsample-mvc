@@ -20,6 +20,16 @@ public class CustomerService {
     CustomerRepository customerRepository;
 
     /**
+     * 指定されたユーザの情報をクレジットカード情報付きで取得します.
+     *
+     * @param email 取得対象顧客のメールアドレス
+     * @return クレジットカード情報付きのCustomerエンティティ
+     */
+    public Customer findCustomerWithCreditByMail(String email) {
+        return customerRepository.findCustomerWithCreditByMail(email);
+    }
+
+    /**
      * 引数のユーザを新規顧客として登録します.
      *
      * @param customer 新規顧客

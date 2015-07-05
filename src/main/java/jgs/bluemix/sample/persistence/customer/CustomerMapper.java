@@ -1,4 +1,4 @@
-package jgs.bluemix.sample.persistence;
+package jgs.bluemix.sample.persistence.customer;
 
 import jgs.bluemix.sample.entity.CreditCard;
 import jgs.bluemix.sample.entity.Customer;

@@ -4,22 +4,45 @@
 <mapper namespace="jgs.bluemix.sample.persistence.customer.CustomerMapper">
 
     <cache/>
+
+    <sql id="customerColumns">
+          customers.id as customer_id,
+          customers.customer_name as customer_customer_name,
+          customers.address as customer_address,
+          customers.tel as customer_tel,
+          customers.hashed_password as customer_hashed_password,
+          customers.email as customer_email,
+          customers.created_at as customer_created_at,
+          customers.updated_at as customer_updated_at,
+          customers.version as customer_version
+    </sql>
+
+    <sql id="creditColumns">
+          creditcards.id as credit_id,
+          creditcards.encrypted_creditno as credit_creditno,
+          creditcards.created_at as credit_created_at,
+          creditcards.updated_at as credit_updated_at,
+          creditcards.version as credit_version
+    </sql>
     
-    <select id="findCustomerByMail" resultType="jgs.bluemix.sample.entity.Customer">
+    <select id="findCustomerByMail" resultMap="customerResultMap">
         SELECT
-          id,
-          customer_name,
-          address,
-          tel,
-          hashed_password,
-          email,
-          created_at,
-          updated_at,
-          version
+          <include refid="customerColumns" />
         FROM
           customers
         WHERE
           email = #{email}
+    </select>
+
+    <select id="findCustomerWithCreditByMail" resultMap="customerResultMap">
+        SELECT
+          <include refid="customerColumns" />,
+          <include refid="creditColumns" />
+        FROM
+          customers
+          INNER JOIN creditcards on customers.id = creditcards.customer_id
+        WHERE
+          customers.email = #{email}
     </select>
 
     <insert id="insertCustomer" parameterType="jgs.bluemix.sample.entity.Customer" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
@@ -96,5 +119,27 @@
           id = #{id}
           AND version = #{version}
     </update>
+
+    <resultMap id="customerResultMap" type="jgs.bluemix.sample.entity.Customer">
+        <id property="id" column="customer_id" />
+        <result property="customerName" column="customer_customer_name" />
+        <result property="address" column="customer_address" />
+        <result property="tel" column="customer_tel" />
+        <result property="hashedPassword" column="customer_hashed_password" />
+        <result property="email" column="customer_email" />
+        <result property="createdAt" column="customer_created_at" />
+        <result property="updatedAt" column="customer_updated_at" />
+        <result property="version" column="customer_version" />
+        <association property="creditCard" resultMap="creditResultMap" />
+    </resultMap>
+
+    <resultMap id="creditResultMap" type="jgs.bluemix.sample.entity.CreditCard">
+        <id property="id" column="credit_id" />
+        <result property="encryptedCreditno" column="credit_creditno" />
+        <result property="createdAt" column="credit_created_at" />
+        <result property="updatedAt" column="credit_updated_at" />
+        <result property="version" column="credit_version" />
+        <association property="customer" resultMap="customerResultMap" />
+    </resultMap>
 
 </mapper>

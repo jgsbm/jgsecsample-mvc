@@ -18,12 +18,23 @@ public class CustomerRepository {
     CustomerMapper customerMapper;
 
     /**
-     * 引数に指定されたメールアドレスを保持するユーザを検索します.
+     * 引数に指定されたメールアドレスを保持するユーザ（クレジットカード情報無し）を検索します.
+     * クレジットカード情報が必要である場合は{@link #findCustomerWithCreditByMail(String)}を利用してください.
      * @param email 検索条件とするメールアドレス
-     * @return 検索結果
+     * @return クレジットカード情報を保持しないCustomerエンティティ
      */
     public Customer findCustomerByMail(String email) {
         return customerMapper.findCustomerByMail(email);
+    }
+
+    /**
+     * 引数に指定されたメールアドレスを保持するユーザ情報（クレジットカード情報付き）を検索します.
+     * クレジットカード情報が不要である場合は{@link #findCustomerByMail(String)}を利用してください.
+     * @param email 検索条件とするメールアドレス
+     * @return クレジットカード情報を保持するCustomerエンティティ
+     */
+    public Customer findCustomerWithCreditByMail(String email) {
+        return customerMapper.findCustomerWithCreditByMail(email);
     }
 
     /**

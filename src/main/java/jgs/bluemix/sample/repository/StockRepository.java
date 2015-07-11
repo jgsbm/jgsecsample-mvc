@@ -1,7 +1,7 @@
 package jgs.bluemix.sample.repository;
 
 import jgs.bluemix.sample.entity.Stock;
-import jgs.bluemix.sample.persistence.product.ProductMapper;
+import jgs.bluemix.sample.persistence.cloud.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;

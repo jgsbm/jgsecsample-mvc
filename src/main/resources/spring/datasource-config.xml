@@ -59,11 +59,11 @@
 
     <!-- Mapper location -->
     <bean id="onpremisesMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="jgs.bluemix.sample.persistence.customer" />
+        <property name="basePackage" value="jgs.bluemix.sample.persistence.onpremises" />
         <property name="sqlSessionFactoryBeanName" value="onpremisesSqlSessionFactory" />
     </bean>
     <bean id="cloudMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="jgs.bluemix.sample.persistence.product" />
+        <property name="basePackage" value="jgs.bluemix.sample.persistence.cloud" />
         <property name="sqlSessionFactoryBeanName" value="cloudSqlSessionFactory" />
     </bean>
 

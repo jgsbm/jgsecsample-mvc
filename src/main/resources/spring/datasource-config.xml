@@ -26,42 +26,45 @@
     <!--</jdbc:initialize-database>-->
 
     <!-- DataSource -->
-    <jdbc:embedded-database id="customerDataSource" type="H2">
+    <!-- オンプレミス相当環境のDataSourceを定義する -->
+    <jdbc:embedded-database id="onpremisesDataSource" type="H2">
         <jdbc:script location="classpath:schema_customer.sql" />
+        <jdbc:script location="classpath:schema_review.sql" />
         <jdbc:script location="classpath:data_customer.sql" />
     </jdbc:embedded-database>
 
-    <jdbc:embedded-database id="productDataSource" type="H2">
+    <!-- Cloud相当環境のDataSourceを定義する -->
+    <jdbc:embedded-database id="cloudDataSource" type="H2">
         <jdbc:script location="classpath:schema_product.sql" />
         <jdbc:script location="classpath:data_product.sql" />
     </jdbc:embedded-database>
 
-    <bean id="customerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="customerDataSource" />
+    <bean id="onpremisesSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="onpremisesDataSource" />
         <property name="configLocation" value="classpath:mybatis-config.xml" />
     </bean>
 
-    <bean id="productSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="productDataSource" />
+    <bean id="cloudSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="cloudDataSource" />
         <property name="configLocation" value="classpath:mybatis-config.xml" />
     </bean>
 
-    <bean id="customerTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="customerDataSource" />
+    <bean id="onpremisesTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="onpremisesDataSource" />
     </bean>
 
-    <bean id="productTransactionManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="productDataSource" />
+    <bean id="cloudTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="cloudDataSource" />
     </bean>
 
     <!-- Mapper location -->
-    <bean id="customerMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <bean id="onpremisesMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="jgs.bluemix.sample.persistence.customer" />
-        <property name="sqlSessionFactoryBeanName" value="customerSqlSessionFactory" />
+        <property name="sqlSessionFactoryBeanName" value="onpremisesSqlSessionFactory" />
     </bean>
-    <bean id="productMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <bean id="cloudMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="jgs.bluemix.sample.persistence.product" />
-        <property name="sqlSessionFactoryBeanName" value="productSqlSessionFactory" />
+        <property name="sqlSessionFactoryBeanName" value="cloudSqlSessionFactory" />
     </bean>
 
 </beans>

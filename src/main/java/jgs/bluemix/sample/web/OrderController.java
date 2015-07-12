@@ -5,11 +5,13 @@ import jgs.bluemix.sample.crypto.LesserAesBytesEncryptor;
 import jgs.bluemix.sample.entity.Customer;
 import jgs.bluemix.sample.entity.LoginUser;
 import jgs.bluemix.sample.entity.Product;
+import jgs.bluemix.sample.entity.Review;
 import jgs.bluemix.sample.exception.OutOfStockException;
 import jgs.bluemix.sample.message.BusinessMessageCodeEnum;
 import jgs.bluemix.sample.service.CustomerService;
 import jgs.bluemix.sample.service.OrderService;
 import jgs.bluemix.sample.service.ProductService;
+import jgs.bluemix.sample.service.ReviewService;
 import jgs.bluemix.sample.util.CreditUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -44,6 +47,9 @@ public class OrderController {
     OrderService orderService;
 
     @Autowired
+    ReviewService reviewService;
+
+    @Autowired
     MessageSource messageSource;
 
     @Autowired
@@ -58,8 +64,10 @@ public class OrderController {
 
     @RequestMapping("/detail")
     public String detail(@RequestParam(value = "productCode") String productCode, Model model) {
-            Product product = productService.findStockProductByProductCode(productCode);
+        Product product = productService.findStockProductByProductCode(productCode);
+        List<Review> reviews = reviewService.findReviewByProductCode(productCode);
         model.addAttribute("product", product);
+        model.addAttribute("reviews", reviews);
         return "detail";
     }
 

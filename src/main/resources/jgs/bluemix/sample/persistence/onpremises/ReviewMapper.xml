@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jgs.bluemix.sample.persistence.onpremises.ReviewMapper">
+
+    <select id="findReviewByProductCode" resultMap="reviewResultMap">
+        SELECT
+          reviews.id as review_id,
+          reviews.evaluation as review_evaluation,
+          reviews.comment as review_comment,
+          reviews.product_code as review_product_code,
+          reviews.created_at as review_created_at,
+          reviews.updated_at as review_updated_at,
+          reviews.version as review_version,
+          customers.id as customer_id,
+          customers.customer_name as customer_customer_name,
+          customers.address as customer_address,
+          customers.tel as customer_tel,
+          customers.hashed_password as customer_hashed_password,
+          customers.email as customer_email,
+          customers.created_at as customer_created_at,
+          customers.updated_at as customer_updated_at,
+          customers.version as customer_version
+        FROM
+          reviews
+          INNER JOIN customers on reviews.customer_id = customers.id
+        WHERE
+          reviews.product_code = #{productCode}
+        ORDER BY
+          reviews.evaluation DESC,
+          reviews.created_at DESC
+    </select>
+
+    <resultMap id="reviewResultMap" type="jgs.bluemix.sample.entity.Review">
+        <id property="id" column="review_id" />
+        <result property="evaluation" column="review_evaluation" />
+        <result property="comment" column="review_comment" />
+        <result property="productCode" column="review_product_code" />
+        <result property="createdAt" column="review_created_at" />
+        <result property="updatedAt" column="review_updated_at" />
+        <result property="version" column="review_version" />
+        <association property="customer" resultMap="customerResultMap" />
+    </resultMap>
+
+    <resultMap id="customerResultMap" type="jgs.bluemix.sample.entity.Customer">
+        <id property="id" column="customer_id" />
+        <result property="customerName" column="customer_customer_name" />
+        <result property="address" column="customer_address" />
+        <result property="tel" column="customer_tel" />
+        <result property="hashedPassword" column="customer_hashed_password" />
+        <result property="email" column="customer_email" />
+        <result property="createdAt" column="customer_created_at" />
+        <result property="updatedAt" column="customer_updated_at" />
+        <result property="version" column="customer_version" />
+    </resultMap>
+
+</mapper>

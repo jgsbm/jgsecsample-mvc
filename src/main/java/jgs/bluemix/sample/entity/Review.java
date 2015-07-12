@@ -13,6 +13,6 @@ import lombok.ToString;
 public class Review extends BaseEntity {
     private Integer evaluation;
     private String comment;
+    private String productCode;
     private Customer customer;
-    private Product product;
 }

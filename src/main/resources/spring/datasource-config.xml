@@ -31,6 +31,7 @@
         <jdbc:script location="classpath:schema_customer.sql" />
         <jdbc:script location="classpath:schema_review.sql" />
         <jdbc:script location="classpath:data_customer.sql" />
+        <jdbc:script location="classpath:data_review.sql" />
     </jdbc:embedded-database>
 
     <!-- Cloud相当環境のDataSourceを定義する -->

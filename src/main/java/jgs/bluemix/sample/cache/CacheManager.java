@@ -47,9 +47,6 @@ public class CacheManager<K, V> {
             return;
         }
 
-        Class clazz = CacheManager.class;
-        clazz.getClassLoader();
-
         Map env = System.getenv();
         VcapCacheCredential credential = loadVcap((String) env.get("VCAP_SERVICES"));
         if (credential == null) {

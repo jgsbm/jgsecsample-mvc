@@ -25,7 +25,6 @@ public class ReviewService {
      * @return 当該商品のレビュー一覧
      */
     public List<Review> findReviewByProductCode(String productCode) {
-        // TODO Cacheの考慮
         return reviewRepository.findReviewByProductCode(productCode);
     }
 

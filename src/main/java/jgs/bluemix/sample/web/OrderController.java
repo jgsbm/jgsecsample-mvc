@@ -1,13 +1,12 @@
 package jgs.bluemix.sample.web;
 
+import jgs.bluemix.sample.cache.ReviewCache;
 import jgs.bluemix.sample.crypto.HexEncodingTextEncryptor;
-import jgs.bluemix.sample.crypto.LesserAesBytesEncryptor;
 import jgs.bluemix.sample.entity.Customer;
 import jgs.bluemix.sample.entity.LoginUser;
 import jgs.bluemix.sample.entity.Product;
 import jgs.bluemix.sample.entity.Review;
 import jgs.bluemix.sample.exception.OutOfStockException;
-import jgs.bluemix.sample.message.BusinessMessageCodeEnum;
 import jgs.bluemix.sample.service.CustomerService;
 import jgs.bluemix.sample.service.OrderService;
 import jgs.bluemix.sample.service.ProductService;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +50,9 @@ public class OrderController {
     ReviewService reviewService;
 
     @Autowired
+    ReviewCache reviewCache;
+
+    @Autowired
     MessageSource messageSource;
 
     @Autowired
@@ -65,9 +68,15 @@ public class OrderController {
     @RequestMapping("/detail")
     public String detail(@RequestParam(value = "productCode") String productCode, Model model) {
         Product product = productService.findStockProductByProductCode(productCode);
-        List<Review> reviews = reviewService.findReviewByProductCode(productCode);
+        // Cacheの取得を行う。cacheが存在しない場合はサービス経由でReviewを取得し、キャッシュに反映する。
+        List<Review> reviews = reviewCache.get(productCode);
+        if (reviews == null) {
+            reviews = reviewService.findReviewByProductCode(productCode);
+            // 結果が0件であった場合も空であった結果をCacheする.
+            reviewCache.put(productCode, reviews);
+        }
         model.addAttribute("product", product);
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("reviews", createProductReviewView(reviews));
         return "detail";
     }
 
@@ -101,6 +110,23 @@ public class OrderController {
                 new String[]{outOfStockProduct.getProductName()}, locale));
         mav.addObject(outOfStockProduct);
         return mav;
+    }
+
+    private List<ProductReviewView> createProductReviewView(List<Review> reviews) {
+        // JDK7のためStreamAPIは利用しない.
+        List<ProductReviewView> resultList = new ArrayList<>();
+        for (Review review : reviews) {
+            resultList.add(convertProductReviewView(review));
+        }
+        return resultList;
+    }
+
+    private ProductReviewView convertProductReviewView(Review review) {
+        ProductReviewView result = new ProductReviewView();
+        result.setName(review.getCustomer().getCustomerName().charAt(0) + "***");
+        result.setEvaluation(review.getEvaluation());
+        result.setComment(review.getComment());
+        return result;
     }
 
     private CashRegisterCustomerView createCustomerView(Customer customer) {

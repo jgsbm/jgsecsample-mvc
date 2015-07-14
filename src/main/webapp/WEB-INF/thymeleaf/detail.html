@@ -49,7 +49,7 @@
                         </tr>
                     </thead>
                     <tr th:each="review,iterStat : ${reviews}">
-                        <td th:text="${review.customer.customerName + ' 様'}">評価者名</td>
+                        <td th:text="${review.name + ' 様'}">評価者名</td>
                         <td th:text="${review.evaluation + ' / 5'}">評価</td>
                         <td th:text="${review.comment}">コメント</td>
                     </tr>

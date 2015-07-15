@@ -2,7 +2,7 @@ package jgs.bluemix.sample.repository;
 
 import jgs.bluemix.sample.entity.CreditCard;
 import jgs.bluemix.sample.entity.Customer;
-import jgs.bluemix.sample.persistence.customer.CustomerMapper;
+import jgs.bluemix.sample.persistence.onpremises.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

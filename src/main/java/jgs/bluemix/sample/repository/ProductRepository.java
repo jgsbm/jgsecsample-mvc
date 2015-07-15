@@ -2,7 +2,7 @@ package jgs.bluemix.sample.repository;
 
 import jgs.bluemix.sample.entity.Product;
 import jgs.bluemix.sample.entity.ProductPic;
-import jgs.bluemix.sample.persistence.product.ProductMapper;
+import jgs.bluemix.sample.persistence.cloud.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

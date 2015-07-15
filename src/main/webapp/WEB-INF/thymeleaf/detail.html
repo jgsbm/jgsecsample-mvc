@@ -37,6 +37,30 @@
 				</form>
 			</div>
 			<div class="clearfix"></div>
+			
+			<div class="container">
+                <table class="table table-striped">
+                    <tbody>
+                    <thead>
+                        <tr>
+                            <th class="col-xs-2">みんなのレビュー</th>
+                            <th class="col-xs-2">評価点</th>
+                            <th class="col-xs-7">コメント</th>
+                        </tr>
+                    </thead>
+                    <tr th:each="review,iterStat : ${reviews}">
+                        <td th:text="${review.name + ' 様'}">評価者名</td>
+                        <td th:text="${review.evaluation + ' / 5'}">評価</td>
+                        <td th:text="${review.comment}">コメント</td>
+                    </tr>
+                    <tr th:remove="all">
+                        <td>評価者名</td>
+                        <td>評価点</td>
+                        <td>コメント</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
 			<div class="row">
 				<div class="col -lg-4">

@@ -14,6 +14,13 @@
     <context:component-scan base-package="jgs.bluemix.sample.repository" />
     <context:component-scan base-package="jgs.bluemix.sample.monitor" />
 
+    <!-- cache関連の設定 -->
+    <context:property-placeholder location="classpath:spring/cache.properties" />
+    <bean class="jgs.bluemix.sample.cache.CacheManager" init-method="init">
+        <property name="enable" value="${cache.enable}" />
+    </bean>
+    <bean class="jgs.bluemix.sample.cache.ReviewCache" init-method="init" />
+
     <!-- MessageResourceの定義 -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:message/application-messages" />

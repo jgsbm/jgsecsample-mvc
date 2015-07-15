@@ -23,6 +23,7 @@
         <aspect.version>1.8.5</aspect.version>
         <hibernate-validator.version>5.1.3.Final</hibernate-validator.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
+        <jackson.version>2.5.1</jackson.version>
         <webjars-bootstrap.version>3.3.4</webjars-bootstrap.version>
         <webjars-jquery.version>1.11.2</webjars-jquery.version>
         <slf4j.version>1.7.11</slf4j.version>
@@ -126,13 +127,20 @@
             <version>8.0.23</version>
         </dependency>
 
+        <!-- jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
         <!-- Logger -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -168,16 +176,84 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <!--cache-->
+                <dependency>
+                    <!--
+                      ThirdParty製のjar(DataCache)を自プロジェクトから解決する.
+                      ライセンス等の関係上、サードパーティ製jarはGithub上にjarをpushできないため、
+                      clone後に個別に${basedir}/lib/配下にjarを格納する必要がある.
+                      また、当サンプルではsystemスコープを利用しているが、対象のjarをmavenのlocal repositoryに直接installしても良い.
+                      この場合は、scopeをsystemではなくprovided指定できるため、当該サードパーティ製jarの依存性がデプロイ先サーバに含まれる場合は、
+                      サードパーティ製jarをwarファイルに内包しない形でのDeployが実施可能となる.
+                    -->
+                    <groupId>ogclient</groupId>
+                    <artifactId>ogclient</artifactId>
+                    <version>1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${basedir}/lib/ogclient.jar</systemPath>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>travis</id>
+            <activation>
+                <file>
+                    <!-- travis.yml内で当該ファイルをtouchすることでmaven profileを有効化する -->
+                    <exists>travis-mvn-profile.activate</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
+                            <excludes>
+                                <!--
+                                　　TravisCIはサードパーティjar（DataCache）に依存するクラスの検証は実施対象外とする.
+                                   実際にDeployを行ったうえで自動テスト等を実施する場合は、別途profileを定義し、
+                                   サードパーティ製jarの依存性を解決できる状態としてビルド／デプロイを実施する必要がある.
+                                   本プロジェクトではCIはコンパイル、および単体テストレベルの実施となっているため、単純にCI対象を狭めることで対応を行う.
+                                   [注意]
+                                   MavenCompilerPluginはコンパイル対象のクラスが依存しているクラスが存在する場合、
+                                   当該クラスがexclude指定されていたとしてもコンパイル対象とする.
+                                   そのため、直接サードパーティに依存していなくとも、関連するクラスを全てexcludeする必要がある.
+                                   (この振る舞いのために、サードパーティ製ライブラリに直接依存しないReviewCacheやOrderControllerについてもexclude扱いとしている)
+                                -->
+                                <exclude>**/CacheManager.java</exclude>
+                                <exclude>**/DataCache.java</exclude>
+                                <exclude>**/ReviewCache.java</exclude>
+                                <exclude>**/OrderController.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
 </project>

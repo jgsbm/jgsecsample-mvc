@@ -3,4 +3,5 @@ language: java
 jdk:
   - oraclejdk7
 
-script: "mvn clean package -P travis"
+before_install:
+  - touch travis-mvn-profile.activate  #travis-ci用のmaven-profile有効化するための空ファイル

@@ -216,6 +216,12 @@
         </profile>
         <profile>
             <id>travis</id>
+            <activation>
+                <file>
+                    <!-- travis.yml内で当該ファイルをtouchすることでmaven profileを有効化する -->
+                    <exists>travis-mvn-profile.activate</exists>
+                </file>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

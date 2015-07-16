@@ -28,8 +28,10 @@ public class ServiceMonitor {
                 signature.getDeclaringTypeName(),
                 signature.getMethod().getName(),
                 point.getArgs()));
-        Object result = point.proceed();
+
         long start = System.currentTimeMillis();
+        Object result = point.proceed();
+
         logger.info(String.format("End Service %s#%s(%s): %s in %smsec",
                 signature.getDeclaringTypeName(),
                 signature.getMethod().getName(),

@@ -1,14 +1,13 @@
 package jgs.bluemix.sample.monitor;
 
 import jgs.bluemix.sample.exception.BusinessException;
+import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,27 +19,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceMonitor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceMonitor.class);
+    private static final Logger logger = Logger.getLogger(ServiceMonitor.class);
 
     @Around("execution(* jgs..service.*Service.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         MethodSignature signature = MethodSignature.class.cast(point.getSignature());
-        logger.info(
-                "Start service {}#{}({})",
+        logger.info(String.format("Start Service %s#%s(%s)",
                 signature.getDeclaringTypeName(),
                 signature.getMethod().getName(),
-                point.getArgs()
-        );
+                point.getArgs()));
         Object result = point.proceed();
         long start = System.currentTimeMillis();
-        logger.info(
-                "End service {}#{}({}): {} in {}msec",
-                signature.getDeclaringType(),
+        logger.info(String.format("End Service %s#%s(%s): %s in %smsec",
+                signature.getDeclaringTypeName(),
                 signature.getMethod().getName(),
                 point.getArgs(),
                 result,
-                System.currentTimeMillis() - start
-        );
+                System.currentTimeMillis() - start));
 
         return result;
     }
@@ -54,12 +49,10 @@ public class ServiceMonitor {
     @AfterThrowing(value = "execution(* jgs..service.*Service.*(..))", throwing = "ex")
     public void throwingBusinessException(JoinPoint point, BusinessException ex) {
         MethodSignature signature = MethodSignature.class.cast(point.getSignature());
-        logger.warn(
-                "throwing BusinessException in {}#{}({})",
+        logger.warn(String.format("throwing BusinessException in %s#%s(%s) %s",
                 signature.getDeclaringType(),
                 signature.getMethod().getName(),
-                point.getArgs(),
-                ex);
+                point.getArgs(), ex));
     }
 
 }

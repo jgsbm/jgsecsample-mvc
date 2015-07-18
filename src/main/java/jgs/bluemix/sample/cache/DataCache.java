@@ -15,7 +15,8 @@ public class DataCache<K, V> implements Cache<K, V> {
     private ObjectGrid grid;
 
     // TODO 設定ファイル上である程度操作できるようにする？
-    private static final String MAP_SUFFIX = "Map.NONE.O";
+    // TODO 複数種類の情報をキャッシュする場合に備えて、DataCacheではMAP_NAMEを持たないようにする.（必要に応じて変更可とする）
+    private static final String MAP_NAME = "JGS.NONE";
 
     DataCache(ObjectGrid grid) {
         this.grid = grid;
@@ -74,6 +75,6 @@ public class DataCache<K, V> implements Cache<K, V> {
      * @return Map名
      */
     private String getMapName() {
-        return grid.getName() + MAP_SUFFIX;
+        return MAP_NAME;
     }
 }

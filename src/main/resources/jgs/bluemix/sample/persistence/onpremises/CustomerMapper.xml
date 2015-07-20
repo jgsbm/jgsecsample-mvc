@@ -61,8 +61,8 @@
           #{tel},
           #{hashedPassword},
           #{email},
-          current_timestamp(),
-          current_timestamp(),
+          current timestamp,
+          current timestamp,
           1
         )
     </insert>
@@ -77,8 +77,8 @@
         VALUES (
           #{encryptedCreditno},
           #{customer.id},
-          current_timestamp(),
-          current_timestamp(),
+          current timestamp,
+          current timestamp,
           1
         )
     </insert>
@@ -90,7 +90,7 @@
           address = #{address},
           tel = #{tel},
           email = #{email},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}
@@ -102,7 +102,7 @@
         SET
           encrypted_creditno = #{encryptedCreditno},
           customer_id = #{customer.id},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}
@@ -113,7 +113,7 @@
         UPDATE customers
         SET
           hashed_password = #{hashedPassword},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}

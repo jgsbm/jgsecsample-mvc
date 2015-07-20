@@ -67,7 +67,7 @@
         UPDATE stocks
         SET
           stock = #{stock},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}

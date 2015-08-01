@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jgs.bluemix.sample.persistence.onpremises.CustomerMapper">
 
-    <cache/>
-
     <sql id="customerColumns">
           customers.id as customer_id,
           customers.customer_name as customer_customer_name,

@@ -14,7 +14,7 @@ CREATE TABLE customers(
 --create creditcards tables
 CREATE TABLE creditcards(
   id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  encrypted_creditno VARCHAR(96) NOT NULL,
+  creditno VARCHAR(96) NOT NULL,
   customer_id BIGINT NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,

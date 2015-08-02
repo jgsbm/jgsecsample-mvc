@@ -17,7 +17,7 @@
 
     <sql id="creditColumns">
           creditcards.id as credit_id,
-          creditcards.encrypted_creditno as credit_creditno,
+          creditcards.creditno as credit_creditno,
           creditcards.created_at as credit_created_at,
           creditcards.updated_at as credit_updated_at,
           creditcards.version as credit_version
@@ -67,7 +67,7 @@
 
     <insert id="insertCreditCard" parameterType="jgs.bluemix.sample.entity.CreditCard" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         INSERT INTO creditcards (
-          encrypted_creditno,
+          creditno,
           customer_id,
           created_at,
           updated_at,
@@ -98,7 +98,7 @@
     <update id="updateCreditCard" parameterType="jgs.bluemix.sample.entity.CreditCard" flushCache="true">
         UPDATE creditcards
         SET
-          encrypted_creditno = #{encryptedCreditno},
+          creditno = #{encryptedCreditno},
           customer_id = #{customer.id},
           updated_at = current timestamp,
           version = version + 1

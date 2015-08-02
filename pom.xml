@@ -5,7 +5,7 @@
 
     <groupId>jgs.bluemix</groupId>
     <artifactId>jgsecsample-mvc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>war</packaging>
 
     <properties>

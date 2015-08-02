@@ -1,44 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://www.springframework.org/schema/context
-         http://www.springframework.org/schema/context/spring-context.xsd
          http://www.springframework.org/schema/jdbc
          http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-    <!--<context:property-placeholder location="classpath:spring/data-access.properties"/>-->
-
-    <!--<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close"-->
-          <!--p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"-->
-          <!--p:username="${jdbc.username}" p:password="${jdbc.password}"/>-->
-
-    <!--
-    <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/xxx"/>
-    -->
-
-    <!--<jdbc:initialize-database data-source="dataSource">-->
-        <!--<jdbc:script location="${jdbc.initLocation}"/>-->
-        <!--<jdbc:script location="${jdbc.dataLocation}"/>-->
-    <!--</jdbc:initialize-database>-->
-
     <!-- DataSource -->
     <!-- オンプレミス相当環境のDataSourceを定義する -->
-    <jdbc:embedded-database id="onpremisesDataSource" type="H2">
+    <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="onpremisesDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:onpremises;MODE=DB2;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+
+    <!-- Cloud相当環境のDataSourceを定義する -->
+    <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="cloudDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:cloud;MODE=DB2;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+
+    <!-- DBの初期化 -->
+    <jdbc:initialize-database data-source="onpremisesDataSource">
         <jdbc:script location="classpath:schema_customer.sql" />
         <jdbc:script location="classpath:schema_review.sql" />
         <jdbc:script location="classpath:data_customer.sql" />
         <jdbc:script location="classpath:data_review.sql" />
-    </jdbc:embedded-database>
+    </jdbc:initialize-database>
 
-    <!-- Cloud相当環境のDataSourceを定義する -->
-    <jdbc:embedded-database id="cloudDataSource" type="H2">
+    <jdbc:initialize-database data-source="cloudDataSource">
         <jdbc:script location="classpath:schema_product.sql" />
         <jdbc:script location="classpath:data_product.sql" />
-    </jdbc:embedded-database>
+    </jdbc:initialize-database>
 
     <bean id="onpremisesSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="onpremisesDataSource" />

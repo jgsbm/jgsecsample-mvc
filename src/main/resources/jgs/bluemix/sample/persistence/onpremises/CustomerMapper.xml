@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jgs.bluemix.sample.persistence.onpremises.CustomerMapper">
 
-    <cache/>
-
     <sql id="customerColumns">
           customers.id as customer_id,
           customers.customer_name as customer_customer_name,
@@ -19,7 +17,7 @@
 
     <sql id="creditColumns">
           creditcards.id as credit_id,
-          creditcards.encrypted_creditno as credit_creditno,
+          creditcards.creditno as credit_creditno,
           creditcards.created_at as credit_created_at,
           creditcards.updated_at as credit_updated_at,
           creditcards.version as credit_version
@@ -61,15 +59,15 @@
           #{tel},
           #{hashedPassword},
           #{email},
-          current_timestamp(),
-          current_timestamp(),
+          current timestamp,
+          current timestamp,
           1
         )
     </insert>
 
     <insert id="insertCreditCard" parameterType="jgs.bluemix.sample.entity.CreditCard" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         INSERT INTO creditcards (
-          encrypted_creditno,
+          creditno,
           customer_id,
           created_at,
           updated_at,
@@ -77,8 +75,8 @@
         VALUES (
           #{encryptedCreditno},
           #{customer.id},
-          current_timestamp(),
-          current_timestamp(),
+          current timestamp,
+          current timestamp,
           1
         )
     </insert>
@@ -90,7 +88,7 @@
           address = #{address},
           tel = #{tel},
           email = #{email},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}
@@ -100,9 +98,9 @@
     <update id="updateCreditCard" parameterType="jgs.bluemix.sample.entity.CreditCard" flushCache="true">
         UPDATE creditcards
         SET
-          encrypted_creditno = #{encryptedCreditno},
+          creditno = #{encryptedCreditno},
           customer_id = #{customer.id},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}
@@ -113,7 +111,7 @@
         UPDATE customers
         SET
           hashed_password = #{hashedPassword},
-          updated_at = current_timestamp(),
+          updated_at = current timestamp,
           version = version + 1
         WHERE
           id = #{id}
